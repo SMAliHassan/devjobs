@@ -1,10 +1,11 @@
 const express = require('express');
-const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
 const mongoSanitize = require('express-mongo-sanitize');
 const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
+let morgan;
+if (process.env.NODE_ENV === 'development') morgan = require('morgan');
 
 const jobRouter = require('./routes/jobsRoutes');
 const globalErrorHandler = require('./controllers/errorController');
@@ -29,7 +30,7 @@ app.use(mongoSanitize());
 
 app.use(xss());
 
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(`${__dirname}/client/build`));
